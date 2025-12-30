@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+"""
+Generate Professional PDF Report with Title Page and Chart+Analysis Pages
+"""
+import sys
+from pathlib import Path
+from PIL import Image
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, PageBreak
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+
+# Paths
+BASE_DIR = Path('/Users/visubramaniam/Downloads/PerformanceExportAnalysis')
+IMAGES_FOLDER = BASE_DIR / 'images'
+PDF_OUTPUT_FILE = BASE_DIR / 'VSP5600_Performance_Report_Professional.pdf'
+
+# Analysis text for each section
+analysis_texts = {
+    '01_cache_metrics.png': "Cache write pending seems to peak to 25% between 21:00 and 00:00. Check the MPU usage at this time and identify the LDEVs that have high transfer rates and IOPS.",
+    '02_mpu_usage.png': "MPU usage is high when write pending is high between 21:00 and 00:00.",
+    '03_hie_metrics.png': "The chart does not show any saturation of the HIE - ISW and MPU - HIE internal paths.",
+    '04_port_response.png': "Port response times should be in the range of 1 ms to 3 ms. When the write pending is high the chart shows that the Port response times are above 10 ms as well.",
+    '05_ldev_iops.png': "The chart identifies the LDEVs with high IO activity. These LDEVs probably contribute to the high write pending activity seen between 21:00 and 00:00.",
+    '06_ldev_transfer_rate.png': "The LDEVs that have high transfer rate are identified in this chart. They will contribute to a noisy neighbour scenario where other LDEVs are IO starved.",
+    '07_ldev_response_time.png': "LDEVs that are affected by the high MPU usage and write pending between 21:00 and 00:00 are identified.",
+    '08_ldev_read_hit_01_00_00_D0X.png': "These set of charts shows the read hit%, read percentage and read response for the IO starved LDEVs identified earlier."
+}
+
+# Main images for the report
+main_chart_images = [
+    '01_cache_metrics.png',
+    '02_mpu_usage.png',
+    '03_hie_metrics.png',
+    '04_port_response.png',
+    '05_ldev_iops.png',
+    '06_ldev_transfer_rate.png',
+    '07_ldev_response_time.png',
+    '08_ldev_read_hit_01_00_00_D0X.png'
+]
+
+# Chart section titles
+chart_titles = {
+    '01_cache_metrics.png': '6.1 Cache Metrics',
+    '02_mpu_usage.png': '6.2 MPU Usage vs Write Pending Rate',
+    '03_hie_metrics.png': '6.3 HIE Metrics: HIE ISW vs MPU HIE',
+    '04_port_response.png': '6.4 Port Response Time Analysis',
+    '05_ldev_iops.png': '6.5 LDEV IOPS Analysis',
+    '06_ldev_transfer_rate.png': '6.6 LDEV Transfer Rate Analysis',
+    '07_ldev_response_time.png': '6.7 LDEV Response Time Analysis',
+    '08_ldev_read_hit_01_00_00_D0X.png': '6.8 LDEV Read Hit Analysis'
+}
+
+def main():
+    print("Creating professional PDF report with title page and formatted content pages...")
+    print(f"Output file: {PDF_OUTPUT_FILE}")
+
+    pdf_path = str(PDF_OUTPUT_FILE)
+
+    # Create the PDF document
+    doc = SimpleDocTemplate(
+        pdf_path,
+        pagesize=A4,
+        rightMargin=0.5*inch,
+        leftMargin=0.5*inch,
+        topMargin=0.75*inch,
+        bottomMargin=0.75*inch
+    )
+
+    # Container for PDF elements
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Define custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=28,
+        textColor=colors.HexColor('#1f4788'),
+        spaceAfter=30,
+        alignment=TA_CENTER,
+        fontName='Helvetica-Bold'
+    )
+
+    subtitle_style = ParagraphStyle(
+        'CustomSubtitle',
+        parent=styles['Normal'],
+        fontSize=14,
+        textColor=colors.HexColor('#333333'),
+        spaceAfter=12,
+        alignment=TA_CENTER
+    )
+
+    chart_title_style = ParagraphStyle(
+        'ChartTitle',
+        parent=styles['Heading2'],
+        fontSize=16,
+        textColor=colors.HexColor('#1f4788'),
+        spaceAfter=12,
+        alignment=TA_CENTER,
+        fontName='Helvetica-Bold'
+    )
+
+    analysis_style = ParagraphStyle(
+        'AnalysisText',
+        parent=styles['Normal'],
+        fontSize=11,
+        alignment=TA_LEFT,
+        spaceAfter=12,
+        leading=14
+    )
+
+    # ===== PAGE 1: TITLE PAGE =====
+    elements.append(Spacer(1, 2*inch))
+
+    # Title
+    elements.append(Paragraph("VSP5600 Performance Analysis Report", title_style))
+
+    # Subtitle
+    elements.append(Spacer(1, 0.3*inch))
+    elements.append(Paragraph("Storage Performance & Capacity Analysis", subtitle_style))
+
+    # Data details
+    elements.append(Spacer(1, 0.5*inch))
+
+    details_text = """
+<br/>
+<b>Analysis Date:</b> 2024-12-30
+<br/>
+<b>Performance Data Date:</b> 2024-12-30
+<br/>
+<b>System:</b> Hitachi VSP5600 Storage Array
+<br/>
+<b>Report Generated By:</b> Performance Analysis System
+"""
+
+    elements.append(Paragraph(details_text, styles['Normal']))
+
+    elements.append(Spacer(1, 0.8*inch))
+
+    # Footer text
+    footer_text = """
+This report provides a comprehensive analysis of storage performance metrics 
+collected from the Hitachi VSP5600 system. It includes detailed charts and 
+analysis of cache performance, processor utilization, port response times, 
+and LDEV (Logical Device) metrics.
+"""
+    elements.append(Paragraph(footer_text, styles['Normal']))
+
+    # Add page break after title page
+    elements.append(PageBreak())
+
+    # ===== PAGES 2-9: CHART + ANALYSIS PAGES =====
+    for idx, chart_file in enumerate(main_chart_images):
+        chart_path = IMAGES_FOLDER / chart_file
+        
+        if not chart_path.exists():
+            print(f"  ⚠️  Chart not found: {chart_file}")
+            continue
+        
+        # Chart title
+        title = chart_titles.get(chart_file, f"Chart {idx+1}")
+        elements.append(Paragraph(title, chart_title_style))
+        elements.append(Spacer(1, 0.2*inch))
+        
+        # Add chart image (resize to fit on page)
+        try:
+            # Calculate image width to fit on A4 page with margins
+            max_width = 6.5*inch  # Available width after margins
+            max_height = 3.5*inch  # Available height after title, spacer, analysis text
+            
+            img = Image.open(chart_path)
+            img_width_px, img_height_px = img.size
+            
+            # Convert pixels to inches (matplotlib saves at 150 DPI)
+            img_width_in = img_width_px / 150.0
+            img_height_in = img_height_px / 150.0
+            
+            # Calculate scaling factor to fit within max dimensions
+            scale_w = max_width / img_width_in if img_width_in > 0 else 1
+            scale_h = max_height / img_height_in if img_height_in > 0 else 1
+            scale_factor = min(scale_w, scale_h, 1.0)
+            
+            final_width = scale_factor * img_width_in * inch
+            final_height = scale_factor * img_height_in * inch
+            
+            img_element = RLImage(str(chart_path), width=final_width, height=final_height)
+            elements.append(img_element)
+            print(f"  ✓ Added: {chart_file}")
+            
+        except Exception as e:
+            print(f"  ✗ Error loading image {chart_file}: {e}")
+            continue
+        
+        elements.append(Spacer(1, 0.2*inch))
+        
+        # Add analysis text
+        analysis_text = analysis_texts.get(chart_file, "No analysis available.")
+        elements.append(Paragraph(f"<b>Analysis:</b>", analysis_style))
+        elements.append(Paragraph(analysis_text, analysis_style))
+        
+        # Add page break (except after last page)
+        if idx < len(main_chart_images) - 1:
+            elements.append(PageBreak())
+
+    # Build PDF
+    try:
+        doc.build(elements)
+        print(f"\n✅ Professional PDF report created successfully!")
+        print(f"   File: {PDF_OUTPUT_FILE}")
+        print(f"   Total Pages: {len(main_chart_images) + 1}")  # +1 for title page
+        print(f"   Includes: 1 Title Page + 8 Analysis Pages with Charts & Text")
+        return 0
+        
+    except Exception as e:
+        print(f"❌ Error creating PDF: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
+
+if __name__ == '__main__':
+    sys.exit(main())
