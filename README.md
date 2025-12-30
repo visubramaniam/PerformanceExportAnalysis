@@ -223,7 +223,21 @@ Key constants to modify in the notebook (Cell 2):
 
 ## License
 
-This project is for internal use.
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+
+This means you are free to:
+- ✅ Use this software for any purpose
+- ✅ Study and modify the source code
+- ✅ Distribute copies of the original software
+- ✅ Distribute your modified versions
+
+Under the following conditions:
+- 📋 You must include the original copyright and license notice
+- 📋 You must disclose the source code when distributing
+- 📋 Modified versions must also be licensed under GPL-3.0
+- 📋 Changes made to the code must be documented
+
+See the [LICENSE](LICENSE) file for the full license text.
 
 ## Author
 
