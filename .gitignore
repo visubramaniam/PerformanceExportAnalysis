@@ -1,0 +1,30 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Data folders (large files - users should download separately)
+out_*/
+unzipped_*/
+archive/
+merged/
+
+# ZIP files (too large for GitHub)
+*.zip
+
+# Images (generated output)
+images/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
