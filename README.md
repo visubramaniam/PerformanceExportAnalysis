@@ -214,6 +214,49 @@ Key constants to modify in the notebook (Cell 2):
 | `PORT_RESPONSE_THRESHOLD` | Port response time threshold (µs) |
 | `LDEV_RESPONSE_THRESHOLD` | LDEV response time threshold (µs) |
 
+## Chart Visualization
+
+The notebook generates 8 main performance charts that are automatically saved to the `images/` folder:
+
+1. **Cache Metrics** - Write Pending Rate vs Cache Usage Rate
+2. **MPU Usage** - Processor utilization across MPU groups
+3. **HIE Metrics** - HIE ISW vs MPU HIE internal paths
+4. **Port Response** - Port response times with latency detection
+5. **LDEV IOPS** - Read/Write IOPS for high-activity logical devices
+6. **LDEV Transfer Rate** - Data throughput analysis
+7. **LDEV Response Time** - Latency analysis vs processor usage
+8. **LDEV Read Hit** - Cache hit analysis for read-heavy workloads
+
+Charts are generated with:
+- **High DPI output** (150 DPI) for publication quality
+- **Proper margins** to ensure all elements including legends are visible
+- **Dual-axis plotting** when comparing different metrics
+- **Automatic legend placement** to avoid clipping or overlapping elements
+
+---
+
+## PDF Report Generation
+
+After running all visualization cells, a professional PDF report can be generated:
+
+1. **Navigate to Section 7: PDF Report Generation**
+2. **Run the PDF generation cell** - This will:
+   - Combine all 8 chart images with analysis text
+   - Create a formatted title page with report metadata
+   - Generate a multi-page PDF report (`VSP5600_Performance_Report_Professional.pdf`)
+   - Display status messages showing which charts were included
+
+The generated PDF includes:
+- **Page 1**: Title page with report header, date, and system information
+- **Pages 2-9**: Eight analysis sections, each with:
+  - Chart title and section number
+  - Full-resolution chart image
+  - Analysis text explaining the metrics and findings
+
+**Note**: The PDF generation requires `reportlab` library. The notebook will automatically install it if not present.
+
+---
+
 ## Troubleshooting
 
 ### "No ZIP file or data folder found"
