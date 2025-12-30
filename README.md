@@ -29,6 +29,7 @@ A Jupyter Notebook for analyzing Hitachi VSP5600 storage performance data. This 
    - Search for "Jupyter" and install the Microsoft Jupyter extension
 
 3. **Set up Python environment**:
+
    ```bash
    # Navigate to the project directory
    cd /path/to/PerformanceExportAnalysis
@@ -58,6 +59,7 @@ A Jupyter Notebook for analyzing Hitachi VSP5600 storage performance data. This 
 ### Option 2: Google Colab
 
 1. **Upload to GitHub** (if not already):
+
    ```bash
    git add .
    git commit -m "Update notebook"
@@ -86,6 +88,7 @@ A Jupyter Notebook for analyzing Hitachi VSP5600 storage performance data. This 
 ### Option 3: Jupyter Notebook (Classic)
 
 1. **Install Jupyter**:
+
    ```bash
    # Create and activate virtual environment (recommended)
    python3 -m venv .venv
@@ -96,6 +99,7 @@ A Jupyter Notebook for analyzing Hitachi VSP5600 storage performance data. This 
    ```
 
 2. **Start Jupyter Notebook server**:
+
    ```bash
    cd /path/to/PerformanceExportAnalysis
    jupyter notebook
@@ -114,6 +118,7 @@ A Jupyter Notebook for analyzing Hitachi VSP5600 storage performance data. This 
 ### Option 4: JupyterLab
 
 1. **Install JupyterLab**:
+
    ```bash
    # Create and activate virtual environment (recommended)
    python3 -m venv .venv
@@ -124,6 +129,7 @@ A Jupyter Notebook for analyzing Hitachi VSP5600 storage performance data. This 
    ```
 
 2. **Start JupyterLab**:
+
    ```bash
    cd /path/to/PerformanceExportAnalysis
    jupyter lab
@@ -140,11 +146,13 @@ A Jupyter Notebook for analyzing Hitachi VSP5600 storage performance data. This 
 Run the notebook non-interactively and generate an HTML report:
 
 1. **Install dependencies**:
+
    ```bash
    pip install jupyter nbconvert pandas matplotlib numpy
    ```
 
 2. **Execute the notebook**:
+
    ```bash
    cd /path/to/PerformanceExportAnalysis
    
@@ -166,11 +174,13 @@ Run the notebook non-interactively and generate an HTML report:
 For parameterized execution (useful for batch processing multiple datasets):
 
 1. **Install papermill**:
+
    ```bash
    pip install papermill pandas matplotlib numpy
    ```
 
 2. **Execute with parameters**:
+
    ```bash
    papermill VSP5600_Performance_Analysis.ipynb output.ipynb
    ```
@@ -207,18 +217,22 @@ Key constants to modify in the notebook (Cell 2):
 ## Troubleshooting
 
 ### "No ZIP file or data folder found"
+
 - Ensure the ZIP file is in the `ROOT_DIR` directory
 - Verify `DATA_FOLDER_NAME` matches your ZIP file name exactly (without `.zip`)
 
 ### Import errors
+
 - Make sure you've activated the virtual environment
 - Run `pip install pandas matplotlib numpy`
 
 ### Kernel not found (VS Code)
+
 - Click on the kernel selector (top right)
 - Select "Python Environments" → Choose `.venv`
 
 ### Permission denied (macOS/Linux)
+
 - Ensure the virtual environment is activated: `source .venv/bin/activate`
 
 ## License
@@ -226,12 +240,14 @@ Key constants to modify in the notebook (Cell 2):
 This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
 
 This means you are free to:
+
 - ✅ Use this software for any purpose
 - ✅ Study and modify the source code
 - ✅ Distribute copies of the original software
 - ✅ Distribute your modified versions
 
 Under the following conditions:
+
 - 📋 You must include the original copyright and license notice
 - 📋 You must disclose the source code when distributing
 - 📋 Modified versions must also be licensed under GPL-3.0
